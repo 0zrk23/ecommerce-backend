@@ -4,15 +4,36 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
-  // find all products
-  // be sure to include its associated Category and Tag data
+router.get('/', async (req, res) => {
+  try{
+    //find all of the products and respond with then
+    const allProductData = await Product.findAll({include: {all: true, nested: true}});
+    // console.log(instanceOfProduct);
+    res.status(200).json(allProductData);
+  }catch(err){
+    console.log(err);
+    res.status(500).json(err);
+  }
 });
 
 // get one product
-router.get('/:id', (req, res) => {
-  // find a single product by its `id`
-  // be sure to include its associated Category and Tag data
+router.get('/:id', async (req, res) => {
+  try{
+    //find the product with the id
+    const instanceOfProduct = await Product.findByPk(req.params.id);
+    //return 404 if no product is found
+    if(!instanceOfProduct){
+      console.log('No product found matching the ID');
+      res.status(404).send('No product found matching the ID');
+      return;
+    }
+    //return the product data
+    console.log(instanceOfProduct);
+    res.status(200).json(instanceOfProduct);
+  }catch(err){
+    console.log(err)
+    res.status(500).json(err);
+  }
 });
 
 // create new product
@@ -89,8 +110,24 @@ router.put('/:id', (req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
-  // delete one product by its `id` value
+router.delete('/:id', async (req, res) => {
+  try{
+    const instanceOfProduct = await Product.findByPk(req.params.id);
+    //if the product returns null return 404
+    if(!instanceOfProduct){
+      console.log('No product found with the ID');
+      res.status(404).send('No product found with the ID');
+      return;
+    }
+    //try to delete the product,
+    instanceOfProduct.destroy();
+    //return the product information
+    console.log(deletedProduct);
+    res.status(200).json({message: "Successfully deleted Product", deleted_product: instanceOfProduct});
+  }catch(err){
+    console.log(err);
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
