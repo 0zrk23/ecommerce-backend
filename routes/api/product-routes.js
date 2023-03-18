@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try{
     //find the product with the id
-    const instanceOfProduct = await Product.findByPk(req.params.id);
+    const instanceOfProduct = await Product.findByPk(req.params.id,{include: {all: true}});
     //return 404 if no product is found
     if(!instanceOfProduct){
       console.log('No product found matching the ID');
@@ -122,7 +122,7 @@ router.delete('/:id', async (req, res) => {
     //try to delete the product,
     instanceOfProduct.destroy();
     //return the product information
-    console.log(deletedProduct);
+    // console.log(deletedProduct);
     res.status(200).json({message: "Successfully deleted Product", deleted_product: instanceOfProduct});
   }catch(err){
     console.log(err);

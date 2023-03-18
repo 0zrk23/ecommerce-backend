@@ -81,11 +81,7 @@ router.delete('/:id', async (req, res) => {
       return;
     }
     //delete category
-    const deletedCategory = await Category.destroy({
-      where: {
-        id: req.params.id
-      },
-    })
+    await instanceOfCategory.destroy()
     //return the deleted data
     res.status(200).json({message: 'Successfully deleted category', deletedCategory: instanceOfCategory})
   }catch(err){
